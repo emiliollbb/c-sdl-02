@@ -45,6 +45,9 @@ int main(int argc, char *args[]) {
 		{
 			process_input(&e, &game_sdl_data, game_logic_data);
 		}
+		// Update data
+		update(&game_sdl_data, game_logic_data);
+
 		// Render
 		render(&game_sdl_data, game_logic_data);
 

@@ -67,8 +67,21 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	SDL_RenderPresent(game_sdl_data->sdl_renderer);
 }
 
+void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
+	// loops index
+	int i;
+	// Game data
+	struct pong_data_struct *pong_data = game_logic_data;
+	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
+		update_position(&(pong_data->players[i].kinematics));
+	}
+}
+
 void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 {
+	// Game data
+	struct pong_data_struct *pong_data = game_logic_data;
+
 	//User requests quit
 	if(e->type == SDL_QUIT
 			// User press ESC or q
@@ -77,5 +90,37 @@ void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *ga
 			|| (e->type == SDL_JOYBUTTONDOWN && e->jbutton.which==0 && e->jbutton.button == 8))
 	{
 		game_sdl_data->quit = 1;
+	}
+	// Axis events
+	else if( e->type == SDL_JOYAXISMOTION)
+	{
+		// Eje y
+		if(e->jaxis.axis == 1) {
+			pong_data->players[e->jaxis.which].kinematics.vy=e->jaxis.value/32767*5;
+		}
+	}
+	// Buttons events
+	else if( e->type == SDL_JOYBUTTONDOWN && e->jbutton.button<8)
+	{
+		//printf("controller: %d button: %d\n",e->jbutton.which, e->jbutton.button);
+		switch( e->jbutton.button)
+		{
+		case 0:
+			pong_data->players[e->jbutton.which].kinematics.vy=0;
+			pong_data->players[e->jbutton.which].kinematics.y=0;
+			break;
+
+		case 1: ; break;
+		case 2:
+			pong_data->players[e->jbutton.which].kinematics.vy=0;
+			pong_data->players[e->jbutton.which].kinematics.y=
+					game_sdl_data->sdl_display_mode->h-PLAYER_HEIGHT;
+			break;
+		case 3: ; break;
+		case 4: ; break;
+		case 5: ; break;
+		case 6: ; break;
+		case 7: ; break;
+		}
 	}
 }

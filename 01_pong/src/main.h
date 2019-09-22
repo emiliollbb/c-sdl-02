@@ -58,5 +58,7 @@ void render(struct sdl_data_struct*, void*);
 void process_input(SDL_Event*, struct sdl_data_struct*, void*);
 // Update speed and position
 void update_position(struct kinematics_struct*);
+// Update data
+void update(struct sdl_data_struct*, void*);
 
 #endif
