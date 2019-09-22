@@ -17,7 +17,7 @@ int main(int argc, char *args[]) {
 	int remaining_ticks;
 
 	// SDL Data
-	struct sdl_data game_sdl_data;
+	struct sdl_data_struct game_sdl_data;
 
 	// Game Data
 	void *game_logic_data;
@@ -66,15 +66,24 @@ int main(int argc, char *args[]) {
 	return 0;
 }
 
-void reset_sdl_data(struct sdl_data *game_sdl_data) {
+void update_position(struct kinematics_struct *kinematics) {
+	// Calculate vx
+	kinematics->vx=kinematics->vx+kinematics->ax;
+	// Calculate vy
+	kinematics->vy=kinematics->vy+kinematics->ay;
+	// Calculate position x
+	kinematics->x=kinematics->x+kinematics->vx;
+	// Calculate position y
+	kinematics->y=kinematics->y+kinematics->vy;
+}
+
+void reset_sdl_data(struct sdl_data_struct *game_sdl_data) {
 	// Loop counter
 	int i;
 	// quit flag
 	game_sdl_data->quit = 0;
-	// Screen Width
-	game_sdl_data->screen_width=SCREEN_WIDTH;
-	// Screen Height
-	game_sdl_data->screen_height=SCREEN_HEIGHT;
+	// Game Over flag
+	game_sdl_data->game_over = 0;
 	// SDL Window
 	game_sdl_data->sdl_window=NULL;
 	game_sdl_data->sdl_renderer=NULL;
@@ -85,7 +94,7 @@ void reset_sdl_data(struct sdl_data *game_sdl_data) {
 	}
 }
 
-void init_sdl(struct sdl_data *game_sdl_data) {
+void init_sdl(struct sdl_data_struct *game_sdl_data) {
 	// Loops index
 	int i;
 
@@ -165,7 +174,7 @@ void init_sdl(struct sdl_data *game_sdl_data) {
 	}
 }
 
-void close_sdl(struct sdl_data *game_sdl_data)
+void close_sdl(struct sdl_data_struct *game_sdl_data)
 {
   int i;
 

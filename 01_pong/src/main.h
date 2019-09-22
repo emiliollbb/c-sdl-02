@@ -9,11 +9,11 @@
 #define SCREEN_HEIGHT 480
 #define JOYSTICK_ARRAY_SIZE 2
 
-struct sdl_data {
+struct sdl_data_struct {
+	// Quit flag
 	int quit;
-	//Screen dimension constants
-	int screen_width;
-	int screen_height;
+	// Game Over flag
+	int game_over;
 
 	// Clock
 	unsigned int ticks;
@@ -37,12 +37,26 @@ struct sdl_data {
 	SDL_Joystick *sdl_joysticks[JOYSTICK_ARRAY_SIZE];
 };
 
-void init_sdl(struct sdl_data*);
-void reset_sdl_data(struct sdl_data*);
-void close_sdl(struct sdl_data*);
-void* init_game(struct sdl_data *game_sdl_data);
+struct kinematics_struct
+{
+	int x, y, vx, vy, ax, ay;
+};
+
+// Init SDL Engine
+void init_sdl(struct sdl_data_struct*);
+// Reset SDL data structure
+void reset_sdl_data(struct sdl_data_struct*);
+// Close SDL Engine
+void close_sdl(struct sdl_data_struct*);
+// Init game data
+void* init_game(struct sdl_data_struct *game_sdl_data);
+// Close game data
 void close_game(void*);
-void render(struct sdl_data*, void*);
-void process_input(SDL_Event*, struct sdl_data*, void*);
+// Render game screen
+void render(struct sdl_data_struct*, void*);
+// Handle input events
+void process_input(SDL_Event*, struct sdl_data_struct*, void*);
+// Update speed and position
+void update_position(struct kinematics_struct*);
 
 #endif
