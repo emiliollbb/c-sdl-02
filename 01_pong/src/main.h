@@ -39,7 +39,7 @@ struct sdl_data_struct {
 
 struct kinematics_struct
 {
-	int x, y, vx, vy, ax, ay;
+	int x, y, vx, vy, ax, ay, w, h;
 };
 
 // Init SDL Engine
@@ -60,5 +60,8 @@ void process_input(SDL_Event*, struct sdl_data_struct*, void*);
 void update_position(struct kinematics_struct*);
 // Update data
 void update(struct sdl_data_struct*, void*);
+// Check collisions
+int check_collision(struct kinematics_struct*, struct kinematics_struct*);
+
 
 #endif

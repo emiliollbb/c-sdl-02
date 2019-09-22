@@ -54,14 +54,14 @@ int main(int argc, char *args[]) {
 		// Fix framerate
 		remaining_ticks = game_sdl_data.ticks + game_sdl_data.ticks_per_frame - SDL_GetTicks();
 		if(remaining_ticks > 0)
-		  {
-		    //remaining = 1;
+		{
+			//remaining = 1;
 			SDL_Delay(remaining_ticks);
-		  }
-		  else
-		  {
-		    printf("Your system is too slow. %d remaining!!!\n", remaining_ticks);
-		  }
+		}
+		else
+		{
+			printf("Your system is too slow. %d remaining!!!\n", remaining_ticks);
+		}
 	}
 
 	close_game(game_logic_data);
@@ -78,6 +78,17 @@ void update_position(struct kinematics_struct *kinematics) {
 	kinematics->x=kinematics->x+kinematics->vx;
 	// Calculate position y
 	kinematics->y=kinematics->y+kinematics->vy;
+}
+
+int check_collision(struct kinematics_struct *object_a, struct kinematics_struct *object_b) {
+	if(object_a->x>=object_b->x && object_a->x<=object_b->x+object_b->w
+			&&  object_a->y>=object_b->y && object_a->y<=object_b->y+object_b->h)
+	{
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 void reset_sdl_data(struct sdl_data_struct *game_sdl_data) {
@@ -150,7 +161,7 @@ void init_sdl(struct sdl_data_struct *game_sdl_data) {
 		game_sdl_data->sdl_window = SDL_CreateWindow(
 				"PONG",
 				SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		game_sdl_data->sdl_display_mode->w, game_sdl_data->sdl_display_mode->h,
+				game_sdl_data->sdl_display_mode->w, game_sdl_data->sdl_display_mode->h,
 				SDL_WINDOW_FULLSCREEN);
 
 		if (game_sdl_data->sdl_window == NULL) {
@@ -171,7 +182,7 @@ void init_sdl(struct sdl_data_struct *game_sdl_data) {
 		//Initialize SDL TTF
 		if (TTF_Init() == -1) {
 			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
-			TTF_GetError());
+					TTF_GetError());
 			exit(-1);
 		}
 	}
@@ -179,35 +190,35 @@ void init_sdl(struct sdl_data_struct *game_sdl_data) {
 
 void close_sdl(struct sdl_data_struct *game_sdl_data)
 {
-  int i;
+	int i;
 
-  // Close SDL TTF
-  TTF_Quit();
+	// Close SDL TTF
+	TTF_Quit();
 
-  //Destroy renderer
-  if(game_sdl_data->sdl_renderer!=NULL)
-  {
-    SDL_DestroyRenderer(game_sdl_data->sdl_renderer);
-    game_sdl_data->sdl_renderer=NULL;
-  }
+	//Destroy renderer
+	if(game_sdl_data->sdl_renderer!=NULL)
+	{
+		SDL_DestroyRenderer(game_sdl_data->sdl_renderer);
+		game_sdl_data->sdl_renderer=NULL;
+	}
 
-  // Destroy window
-  if(game_sdl_data->sdl_window != NULL)
-  {
-    SDL_DestroyWindow(game_sdl_data->sdl_window);
-    game_sdl_data->sdl_window=NULL;
-  }
+	// Destroy window
+	if(game_sdl_data->sdl_window != NULL)
+	{
+		SDL_DestroyWindow(game_sdl_data->sdl_window);
+		game_sdl_data->sdl_window=NULL;
+	}
 
-  // Free sdl_display_mode
-  free(game_sdl_data->sdl_display_mode);
-  game_sdl_data->sdl_display_mode=NULL;
+	// Free sdl_display_mode
+	free(game_sdl_data->sdl_display_mode);
+	game_sdl_data->sdl_display_mode=NULL;
 
-  for(i=0; i<game_sdl_data->num_joysticks; i++)
-  {
-    SDL_JoystickClose(game_sdl_data->sdl_joysticks[i]);
-    game_sdl_data->sdl_joysticks[i]=NULL;
-  }
+	for(i=0; i<game_sdl_data->num_joysticks; i++)
+	{
+		SDL_JoystickClose(game_sdl_data->sdl_joysticks[i]);
+		game_sdl_data->sdl_joysticks[i]=NULL;
+	}
 
-  // Exit SDL
-  SDL_Quit();
+	// Exit SDL
+	SDL_Quit();
 }

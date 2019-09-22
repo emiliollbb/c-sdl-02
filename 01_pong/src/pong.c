@@ -14,8 +14,12 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	pong_logic_data->ball.ay=0;
 	pong_logic_data->ball.vx=0;
 	pong_logic_data->ball.vy=0;
-	pong_logic_data->ball.x=100;
-	pong_logic_data->ball.y=100;
+	pong_logic_data->ball.x=game_sdl_data->sdl_display_mode->w/2;
+	pong_logic_data->ball.y=game_sdl_data->sdl_display_mode->h/2;
+	pong_logic_data->ball.w=BALL_SIZE;
+	pong_logic_data->ball.h=BALL_SIZE;
+
+	init_ball(game_sdl_data, pong_logic_data);
 
 	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
 		pong_logic_data->players[i].kinematics.ax=0;
@@ -23,6 +27,9 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 		pong_logic_data->players[i].kinematics.vx=0;
 		pong_logic_data->players[i].kinematics.vy=0;
 		pong_logic_data->players[i].kinematics.y=100;
+		pong_logic_data->players[i].kinematics.w=PLAYER_WIDTH;
+		pong_logic_data->players[i].kinematics.h=PLAYER_HEIGHT;
+		pong_logic_data->players[i].points=0;
 	}
 
 	pong_logic_data->players[0].kinematics.x=10;
@@ -31,6 +38,13 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 
 	// Return pointer to initialized struct
 	return pong_logic_data;
+}
+
+void init_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data){
+	pong_data->ball.vx=10;
+	pong_data->ball.vy=10;
+	pong_data->ball.x=game_sdl_data->sdl_display_mode->w/2;
+	pong_data->ball.y=game_sdl_data->sdl_display_mode->h/2;
 }
 
 void close_game(void *game_logic_data)
@@ -61,7 +75,15 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 		SDL_RenderFillRect(game_sdl_data->sdl_renderer, &sdl_rect);
 	}
 
-
+	// Draw ball
+	if(!game_sdl_data->game_over)
+	{
+		sdl_rect.x=pong_data->ball.x;
+		sdl_rect.y=pong_data->ball.y;
+		sdl_rect.w=BALL_SIZE;
+		sdl_rect.h=BALL_SIZE;
+		SDL_RenderFillRect(game_sdl_data->sdl_renderer, &sdl_rect);
+	}
 
 	//Update screen
 	SDL_RenderPresent(game_sdl_data->sdl_renderer);
@@ -72,8 +94,46 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 	int i;
 	// Game data
 	struct pong_data_struct *pong_data = game_logic_data;
+	// Update players position
 	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
 		update_position(&(pong_data->players[i].kinematics));
+	}
+
+	// Update ball
+	update_position(&(pong_data->ball));
+	check_collisions_ball(game_sdl_data, pong_data);
+}
+
+void check_collisions_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data) {
+	// loops index
+	int i;
+	// Check collisions players
+	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
+		if(check_collision(&pong_data->ball, &pong_data->players[i].kinematics))
+		{
+			pong_data->ball.vx=-1*pong_data->ball.vx;
+		}
+	}
+	// Check collision top and bottom wall
+	if(pong_data->ball.y<0 || pong_data->ball.y>game_sdl_data->sdl_display_mode->h)
+	{
+		pong_data->ball.vy=-1*pong_data->ball.vy;
+	}
+	// Check collision left wall
+	if(pong_data->ball.x<0)
+	{
+		pong_data->players[1].points++;
+		init_ball(game_sdl_data, pong_data);
+	}
+	// Check collision right wall
+	if(pong_data->ball.x>game_sdl_data->sdl_display_mode->w)
+	{
+		pong_data->players[0].points++;
+		init_ball(game_sdl_data, pong_data);
+	}
+	else if(pong_data->ball.x>game_sdl_data->sdl_display_mode->w)
+	{
+		pong_data->ball.vx=-1*pong_data->ball.vx;
 	}
 }
 
@@ -100,7 +160,7 @@ void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *ga
 		}
 	}
 	// Buttons events
-	else if( e->type == SDL_JOYBUTTONDOWN && e->jbutton.button<8)
+	else if( e->type == SDL_JOYBUTTONDOWN)
 	{
 		//printf("controller: %d button: %d\n",e->jbutton.which, e->jbutton.button);
 		switch( e->jbutton.button)
