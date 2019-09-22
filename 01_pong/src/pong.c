@@ -36,6 +36,8 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	pong_logic_data->players[1].kinematics.x=
 			game_sdl_data->sdl_display_mode->w-10-PLAYER_WIDTH;
 
+	pong_logic_data->number_font=NULL;
+
 	// Return pointer to initialized struct
 	return pong_logic_data;
 }
@@ -102,6 +104,28 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 	// Update ball
 	update_position(&(pong_data->ball));
 	check_collisions_ball(game_sdl_data, pong_data);
+
+	// Check Game Over
+	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
+		if(pong_data->players[i].points>=10)
+		{
+			game_sdl_data->game_over=1;
+		}
+	}
+}
+
+void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
+{
+	// Game data
+	struct pong_data_struct *pong_data = game_logic_data;
+
+	//Open the font
+	pong_data->number_font = TTF_OpenFont("DSEG7Classic-Bold.ttf", 50);
+	if(pong_data->number_font == NULL)
+	{
+		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+		exit(-1);
+	}
 }
 
 void check_collisions_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data) {
