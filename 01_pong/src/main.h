@@ -1,5 +1,7 @@
 // Main SDL library
 #include <SDL2/SDL.h>
+// SDL Fonts
+#include <SDL2/SDL_ttf.h>
 
 #ifndef MAIN_H
 #define MAIN_H
@@ -62,6 +64,8 @@ void update_position(struct kinematics_struct*);
 void update(struct sdl_data_struct*, void*);
 // Check collisions
 int check_collision(struct kinematics_struct*, struct kinematics_struct*);
-
-
+// Render text
+void render_text(SDL_Renderer* sdl_renderer, SDL_Color textColor, TTF_Font *font, char *text, int x, int y);
+// Load media
+void load_media(struct sdl_data_struct*, void*);
 #endif

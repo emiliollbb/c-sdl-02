@@ -37,6 +37,8 @@ int main(int argc, char *args[]) {
 	// Init game data
 	game_logic_data = init_game(&game_sdl_data);
 
+	load_media(&game_sdl_data, game_logic_data);
+
 	// Main game loop
 	while (!game_sdl_data.quit) {
 		game_sdl_data.ticks = SDL_GetTicks();
@@ -105,6 +107,40 @@ void reset_sdl_data(struct sdl_data_struct *game_sdl_data) {
 	for(i=0; i<JOYSTICK_ARRAY_SIZE; i++)
 	{
 		game_sdl_data->sdl_joysticks[i]=NULL;
+	}
+}
+
+void render_text(SDL_Renderer* sdl_renderer, SDL_Color textColor, TTF_Font *font, char *text, int x, int y) {
+	// SDL Surface
+	SDL_Surface *loadedSurface;
+	// Text texture
+	SDL_Texture* texture;
+
+	//Load image at specified path
+	loadedSurface = TTF_RenderText_Solid(font, text, textColor);
+	if( loadedSurface == NULL )
+	{
+		printf( "Unable to render text! SDL_image Error: %s\n", TTF_GetError() );
+		exit(-1);
+	}
+	else
+	{
+		//Create texture from surface pixels
+		texture = SDL_CreateTextureFromSurface(sdl_renderer, loadedSurface );
+		if(texture == NULL )
+		{
+			printf( "Unable to create texture! SDL Error: %s\n", SDL_GetError() );
+			exit(-1);
+		}
+		else {
+			SDL_Rect number_rect = {x, y, loadedSurface->w, loadedSurface->h};
+			SDL_RenderCopy(sdl_renderer, texture, NULL, &number_rect);
+
+			SDL_DestroyTexture(texture);
+		}
+
+		// Clean surface
+		SDL_FreeSurface( loadedSurface );
 	}
 }
 

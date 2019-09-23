@@ -36,10 +36,21 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	pong_logic_data->players[1].kinematics.x=
 			game_sdl_data->sdl_display_mode->w-10-PLAYER_WIDTH;
 
-	pong_logic_data->number_font=NULL;
+	pong_logic_data->media.number_font=NULL;
 
 	// Return pointer to initialized struct
 	return pong_logic_data;
+}
+
+void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
+	// Game data
+	struct pong_data_struct *pong_data = game_logic_data;
+	pong_data->media.number_font=TTF_OpenFont("res/DSEG7Classic-Bold.ttf", 50);
+	if(pong_data->media.number_font == NULL)
+	{
+		printf( "Failed to load font! SDL_ttf Error: %s\n", TTF_GetError() );
+		exit(-1);
+	}
 }
 
 void init_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data){
@@ -62,6 +73,10 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	SDL_Rect sdl_rect;
 	// Game data
 	struct pong_data_struct *pong_data = game_logic_data;
+	// Text buffer
+	char buffer[100];
+	// Text color
+	SDL_Color text_color;
 
 	//Clear screen
 	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0x00, 0x00, 0x00, 0xFF);
@@ -77,6 +92,19 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 		SDL_RenderFillRect(game_sdl_data->sdl_renderer, &sdl_rect);
 	}
 
+	// Draw players counters
+	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	text_color.r=255;
+	text_color.g=255;
+	text_color.b=255;
+	text_color.a=0;
+	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
+		sprintf(buffer, "%02d", pong_data->players[i].points);
+		render_text(game_sdl_data->sdl_renderer, text_color,
+				pong_data->media.number_font, buffer,
+				5+i*game_sdl_data->sdl_display_mode->w/2, 10);
+	}
+
 	// Draw ball
 	if(!game_sdl_data->game_over)
 	{
@@ -86,6 +114,13 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 		sdl_rect.h=BALL_SIZE;
 		SDL_RenderFillRect(game_sdl_data->sdl_renderer, &sdl_rect);
 	}
+	else {
+		render_text(game_sdl_data->sdl_renderer, text_color,
+				pong_data->media.number_font, "GAME OVER",
+				50, game_sdl_data->sdl_display_mode->h/2-25);
+	}
+
+
 
 	//Update screen
 	SDL_RenderPresent(game_sdl_data->sdl_renderer);
@@ -114,19 +149,6 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 	}
 }
 
-void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
-{
-	// Game data
-	struct pong_data_struct *pong_data = game_logic_data;
-
-	//Open the font
-	pong_data->number_font = TTF_OpenFont("DSEG7Classic-Bold.ttf", 50);
-	if(pong_data->number_font == NULL)
-	{
-		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
-		exit(-1);
-	}
-}
 
 void check_collisions_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data) {
 	// loops index

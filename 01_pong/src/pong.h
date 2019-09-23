@@ -13,12 +13,16 @@ struct pong_player {
 	int points;
 };
 
+struct pong_media_struct{
+	//Globally used font
+	TTF_Font *number_font;
+};
+
 struct pong_data_struct
 {
 	struct kinematics_struct ball;
 	struct pong_player players[PONG_PLAYERS_COUNT];
-	//Globally used font
-	TTF_Font *number_font;
+	struct pong_media_struct media;
 };
 
 void check_collisions_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data);
