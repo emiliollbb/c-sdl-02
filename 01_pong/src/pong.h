@@ -14,8 +14,10 @@ struct pong_player {
 };
 
 struct pong_media_struct{
-	//Globally used font
+	// Numeric font
 	TTF_Font *number_font;
+	// Text font
+	TTF_Font *text_font;
 };
 
 struct pong_data_struct

@@ -37,6 +37,7 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 			game_sdl_data->sdl_display_mode->w-10-PLAYER_WIDTH;
 
 	pong_logic_data->media.number_font=NULL;
+	pong_logic_data->media.text_font=NULL;
 
 	// Return pointer to initialized struct
 	return pong_logic_data;
@@ -48,7 +49,14 @@ void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	pong_data->media.number_font=TTF_OpenFont("res/DSEG7Classic-Bold.ttf", 50);
 	if(pong_data->media.number_font == NULL)
 	{
-		printf( "Failed to load font! SDL_ttf Error: %s\n", TTF_GetError() );
+		printf( "Failed to load numeric font! SDL_ttf Error: %s\n", TTF_GetError() );
+		exit(-1);
+	}
+
+	pong_data->media.text_font=TTF_OpenFont("res/ArcadeClassic.ttf", 160);
+	if(pong_data->media.text_font == NULL)
+	{
+		printf( "Failed to load text font! SDL_ttf Error: %s\n", TTF_GetError() );
 		exit(-1);
 	}
 }
@@ -114,10 +122,11 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 		sdl_rect.h=BALL_SIZE;
 		SDL_RenderFillRect(game_sdl_data->sdl_renderer, &sdl_rect);
 	}
+	// Draw Game Over
 	else {
 		render_text(game_sdl_data->sdl_renderer, text_color,
-				pong_data->media.number_font, "GAME OVER",
-				50, game_sdl_data->sdl_display_mode->h/2-25);
+				pong_data->media.text_font, "GAME OVER",
+				300, game_sdl_data->sdl_display_mode->h/2-80);
 	}
 
 
