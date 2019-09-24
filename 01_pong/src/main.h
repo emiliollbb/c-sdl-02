@@ -41,7 +41,7 @@ struct sdl_data_struct {
 
 struct kinematics_struct
 {
-	int x, y, vx, vy, ax, ay, w, h;
+	int enabled, x, y, vx, vy, ax, ay, w, h;
 };
 
 // Init SDL Engine

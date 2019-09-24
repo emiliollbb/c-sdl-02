@@ -47,8 +47,10 @@ int main(int argc, char *args[]) {
 		{
 			process_input(&e, &game_sdl_data, game_logic_data);
 		}
-		// Update data
-		update(&game_sdl_data, game_logic_data);
+		// Update data if game is not over
+		if(!game_sdl_data.game_over) {
+			update(&game_sdl_data, game_logic_data);
+		}
 
 		// Render
 		render(&game_sdl_data, game_logic_data);
@@ -83,7 +85,8 @@ void update_position(struct kinematics_struct *kinematics) {
 }
 
 int check_collision(struct kinematics_struct *object_a, struct kinematics_struct *object_b) {
-	if(object_a->x>=object_b->x && object_a->x<=object_b->x+object_b->w
+	if(object_a->enabled && object_b->enabled
+			&& object_a->x>=object_b->x && object_a->x<=object_b->x+object_b->w
 			&&  object_a->y>=object_b->y && object_a->y<=object_b->y+object_b->h)
 	{
 		return 1;
