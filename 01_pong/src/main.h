@@ -68,4 +68,7 @@ int check_collision(struct kinematics_struct*, struct kinematics_struct*);
 void render_text(SDL_Renderer* sdl_renderer, SDL_Color textColor, TTF_Font *font, char *text, int x, int y);
 // Load media
 void load_media(struct sdl_data_struct*, void*);
+// Load Texture
+SDL_Texture* load_texture(char *path, SDL_Renderer *sdl_renderer);
+
 #endif

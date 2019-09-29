@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 // SDL Fonts library. Used to render text
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "main.h"
 
@@ -260,4 +262,30 @@ void close_sdl(struct sdl_data_struct *game_sdl_data)
 
 	// Exit SDL
 	SDL_Quit();
+}
+
+SDL_Texture* load_texture(char *path, SDL_Renderer *sdl_renderer)
+{
+  // Aux surface
+  SDL_Surface* loadedSurface;
+  SDL_Texture* loadedTexture;
+
+  //Load image at specified path
+  loadedSurface = IMG_Load(path);
+  if(loadedSurface == NULL)
+  {
+    printf( "Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
+    exit(-1);
+  }
+  loadedTexture = SDL_CreateTextureFromSurface(sdl_renderer, loadedSurface);
+  if(loadedTexture == NULL)
+  {
+    printf( "Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
+  }
+
+  //Get rid of old loaded surface
+  SDL_FreeSurface(loadedSurface);
+
+  return loadedTexture;
+
 }
