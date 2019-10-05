@@ -103,7 +103,7 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 			ducks_data->ducks[i].kinematics.vy=0;
 		}
 		// Disable outscreen ducks
-		if(ducks_data->ducks[i].kinematics.vx>0 && ducks_data->ducks[i].kinematics.x>SCREEN_WIDTH)
+		if(ducks_data->ducks[i].kinematics.vx>0 && ducks_data->ducks[i].kinematics.x > game_sdl_data->sdl_display_mode->w)
 		{
 			ducks_data->ducks[i].kinematics.enabled=0;
 		}
