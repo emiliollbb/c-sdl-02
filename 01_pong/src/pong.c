@@ -10,6 +10,7 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	// Initialize memory for game logic struct
 	pong_logic_data = malloc(sizeof(struct pong_data_struct));
 
+	pong_logic_data->ball.enabled=1;
 	pong_logic_data->ball.ax=0;
 	pong_logic_data->ball.ay=0;
 	pong_logic_data->ball.vx=0;
@@ -22,6 +23,7 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	init_ball(game_sdl_data, pong_logic_data);
 
 	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
+		pong_logic_data->players[i].kinematics.enabled=1;
 		pong_logic_data->players[i].kinematics.ax=0;
 		pong_logic_data->players[i].kinematics.ay=0;
 		pong_logic_data->players[i].kinematics.vx=0;
@@ -211,14 +213,14 @@ void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *ga
 	{
 		// Eje y
 		if(e->jaxis.axis == 1) {
-			pong_data->players[e->jaxis.which].kinematics.vy=e->jaxis.value/32767*5;
+			pong_data->players[e->jaxis.which].kinematics.vy=e->jaxis.value*PLAYER_SPEED/32767;
 		}
 	}
 	// Buttons events
 	else if( e->type == SDL_JOYBUTTONDOWN)
 	{
 		//printf("controller: %d button: %d\n",e->jbutton.which, e->jbutton.button);
-		switch( e->jbutton.button)
+		switch(e->jbutton.button)
 		{
 		case 0:
 			pong_data->players[e->jbutton.which].kinematics.vy=0;
@@ -236,6 +238,42 @@ void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *ga
 		case 5: ; break;
 		case 6: ; break;
 		case 7: ; break;
+		}
+	}
+	else if(e->type == SDL_KEYDOWN)
+	{
+		switch(e->key.keysym.sym)
+		{
+		case SDLK_UP:
+			pong_data->players[1].kinematics.vy=-PLAYER_SPEED;
+			break;
+		case SDLK_DOWN:
+			pong_data->players[1].kinematics.vy=PLAYER_SPEED;
+			break;
+		case 'w':
+			pong_data->players[0].kinematics.vy=-PLAYER_SPEED;
+			break;
+		case 's':
+			pong_data->players[0].kinematics.vy=PLAYER_SPEED;
+			break;
+		}
+	}
+	else if(e->type == SDL_KEYUP)
+	{
+		switch(e->key.keysym.sym)
+		{
+		case SDLK_UP:
+			pong_data->players[1].kinematics.vy=0;
+			break;
+		case SDLK_DOWN:
+			pong_data->players[1].kinematics.vy=0;
+			break;
+		case 'w':
+			pong_data->players[0].kinematics.vy=0;
+			break;
+		case 's':
+			pong_data->players[0].kinematics.vy=0;
+			break;
 		}
 	}
 }

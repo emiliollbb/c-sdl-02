@@ -8,6 +8,7 @@
 #define PLAYER_WIDTH 30
 #define PLAYER_HEIGHT 300
 #define BALL_SIZE 20
+#define PLAYER_SPEED 5
 
 struct pong_player {
 	struct kinematics_struct kinematics;

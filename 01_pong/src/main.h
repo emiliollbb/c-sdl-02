@@ -7,7 +7,7 @@
 #define MAIN_H
 
 #define FPS 50
-#define SCREEN_WIDTH 720
+#define SCREEN_WIDTHzzz 720
 #define SCREEN_HEIGHT 480
 #define JOYSTICK_ARRAY_SIZE 2
 
