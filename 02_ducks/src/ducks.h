@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "../../01_pong/src/main.h"
 
 #ifndef PONG_H
@@ -19,10 +20,9 @@
 #define SPEED_BULLET 30.0
 #define ANGLE_BULLET 35.0*M_PI/180.0
 
-//x400 y71 w100 h196
-
 struct ducks_media_s {
 	SDL_Texture *texture_sprites;
+	Mix_Chunk *fire_sound;
 };
 
 struct duck_s {

@@ -63,6 +63,10 @@ void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	}
 }
 
+void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
+
+}
+
 void init_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data){
 	pong_data->ball.vx=10;
 	pong_data->ball.vy=10;

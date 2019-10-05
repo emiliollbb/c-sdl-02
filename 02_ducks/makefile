@@ -6,7 +6,7 @@ CC = gcc
 COMPILER_FLAGS = -w -c
 
 #LINKER_FLAGS specifies the libraries we're linking against 
-LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
+LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
 
 # DEBUG FLAG specifies the flag used to add debug information
 DEBUG_FLAG=-g

@@ -70,6 +70,7 @@ int main(int argc, char *args[]) {
 		}
 	}
 
+	close_media(&game_sdl_data, game_logic_data);
 	close_game(game_logic_data);
 	close_sdl(&game_sdl_data);
 	return 0;
@@ -226,6 +227,13 @@ void init_sdl(struct sdl_data_struct *game_sdl_data) {
 					TTF_GetError());
 			exit(-1);
 		}
+
+		//Initialize SDL_mixer
+		if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 512 )<0)
+		{
+			printf( "SDL_mixer could not initialize!\n");
+			exit(-1);
+		}
 	}
 }
 
@@ -266,26 +274,26 @@ void close_sdl(struct sdl_data_struct *game_sdl_data)
 
 SDL_Texture* load_texture(char *path, SDL_Renderer *sdl_renderer)
 {
-  // Aux surface
-  SDL_Surface* loadedSurface;
-  SDL_Texture* loadedTexture;
+	// Aux surface
+	SDL_Surface* loadedSurface;
+	SDL_Texture* loadedTexture;
 
-  //Load image at specified path
-  loadedSurface = IMG_Load(path);
-  if(loadedSurface == NULL)
-  {
-    printf( "Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
-    exit(-1);
-  }
-  loadedTexture = SDL_CreateTextureFromSurface(sdl_renderer, loadedSurface);
-  if(loadedTexture == NULL)
-  {
-    printf( "Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
-  }
+	//Load image at specified path
+	loadedSurface = IMG_Load(path);
+	if(loadedSurface == NULL)
+	{
+		printf( "Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
+		exit(-1);
+	}
+	loadedTexture = SDL_CreateTextureFromSurface(sdl_renderer, loadedSurface);
+	if(loadedTexture == NULL)
+	{
+		printf( "Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
+	}
 
-  //Get rid of old loaded surface
-  SDL_FreeSurface(loadedSurface);
+	//Get rid of old loaded surface
+	SDL_FreeSurface(loadedSurface);
 
-  return loadedTexture;
+	return loadedTexture;
 
 }

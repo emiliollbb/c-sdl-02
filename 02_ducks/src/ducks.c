@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "../../01_pong/src/main.h"
 #include "ducks.h"
 
@@ -44,6 +45,22 @@ void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	struct ducks_game_data_s *ducks_data = game_logic_data;
 
 	ducks_data->media.texture_sprites=load_texture("res/duckhunt_sprites.png", game_sdl_data->sdl_renderer);
+
+	// Load firing chunk
+	ducks_data->media.fire_sound = Mix_LoadWAV("res/firing.wav");
+}
+
+void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
+	// Game data
+	struct ducks_game_data_s *ducks_data = game_logic_data;
+
+	// Free sound effects
+	Mix_FreeChunk(ducks_data->media.fire_sound);
+	ducks_data->media.fire_sound = NULL;
+
+	// Destroy textures
+	SDL_DestroyTexture(ducks_data->media.texture_sprites);
+	ducks_data->media.texture_sprites = NULL;
 }
 
 void close_game(void *game_logic_data)
@@ -235,7 +252,7 @@ void fire(int player, struct ducks_game_data_s *ducks_data) {
 			ducks_data->bullets[i].x=ducks_data->hunter.x + HUNTER_WIDTH;
 			ducks_data->bullets[i].vx=SPEED_BULLET*cos(ANGLE_BULLET);
 			ducks_data->bullets[i].vy=-1.0*SPEED_BULLET*sin(ANGLE_BULLET);
-			//Mix_PlayChannel(-1, fire_chunk, 0);
+			Mix_PlayChannel(-1, ducks_data->media.fire_sound, 0);
 			break;
 		}
 	}
