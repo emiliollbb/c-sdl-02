@@ -30,6 +30,12 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	ducks_data->hunter.x = 0;
 	ducks_data->hunter.y = game_sdl_data->sdl_display_mode->h - ducks_data->hunter.h;
 
+	// Init bullets
+	for(i=0; i<BULLETS_SIZE; i++)
+	{
+		ducks_data->bullets[i].enabled=0;
+	}
+
 	return ducks_data;
 }
 
@@ -98,6 +104,20 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	sdl_rect2.h=ducks_data->hunter.h;
 	SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.texture_sprites, &sdl_rect,  &sdl_rect2, 0.0, NULL, SDL_FLIP_NONE);
 
+	// Render fired bullets
+	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0x00, 0x00, 0x00, 0xFF );
+	for(i=0; i<BULLETS_SIZE; i++)
+	{
+		if(ducks_data->bullets[i].enabled)
+		{
+			sdl_rect.x=ducks_data->bullets[i].x;
+			sdl_rect.y=ducks_data->bullets[i].y;
+			sdl_rect.w=FIRED_BULLET_SIZE;
+			sdl_rect.h=FIRED_BULLET_SIZE;
+			SDL_RenderFillRect(game_sdl_data->sdl_renderer, &sdl_rect);
+		}
+	}
+
 	//Update screen
 	SDL_RenderPresent(game_sdl_data->sdl_renderer);
 }
@@ -114,11 +134,11 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 		// Update ducks speed
 
 		// Set speed to 0 to outscreen ducks
-		if(ducks_data->ducks[i].kinematics.y>SCREEN_HEIGHT)
+		if(ducks_data->ducks[i].kinematics.y > game_sdl_data->sdl_display_mode->h)
 		{
-			ducks_data->ducks[i].kinematics.enabled=0;
-			ducks_data->ducks[i].kinematics.vx=0;
-			ducks_data->ducks[i].kinematics.vy=0;
+			ducks_data->ducks[i].kinematics.enabled = 0;
+			ducks_data->ducks[i].kinematics.vx = 0;
+			ducks_data->ducks[i].kinematics.vy = 0;
 		}
 		// Disable outscreen ducks
 		if(ducks_data->ducks[i].kinematics.vx>0 && ducks_data->ducks[i].kinematics.x > game_sdl_data->sdl_display_mode->w)
@@ -139,19 +159,39 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 		// 10 frames after shot, the ducks falls
 		if(ducks_data->ducks[i].shoot_time != 0 && game_sdl_data->ticks == ducks_data->ducks[i].shoot_time+10)
 		{
-			ducks_data->ducks[i].kinematics.vx=0;
-			ducks_data->ducks[i].kinematics.vy=10;
+			ducks_data->ducks[i].kinematics.vx = 0;
+			ducks_data->ducks[i].kinematics.vy = 10;
 		}
 
 		// Update ducks position
-		ducks_data->ducks[i].kinematics.x+=ducks_data->ducks[i].kinematics.vx;
-		ducks_data->ducks[i].kinematics.y+=ducks_data->ducks[i].kinematics.vy;
+		ducks_data->ducks[i].kinematics.x += ducks_data->ducks[i].kinematics.vx;
+		ducks_data->ducks[i].kinematics.y += ducks_data->ducks[i].kinematics.vy;
 
+	}
+
+	// Update bullets
+	for(i=0; i<BULLETS_SIZE; i++)
+	{
+		if(ducks_data->bullets[i].y > game_sdl_data->sdl_display_mode->h
+				|| ducks_data->bullets[i].y < 0
+				|| ducks_data->bullets[i].x > game_sdl_data->sdl_display_mode->w
+				|| ducks_data->bullets[i].x < 0)
+		{
+			ducks_data->bullets[i].enabled = 0;
+		}
+		if(ducks_data->bullets[i].enabled)
+		{
+			ducks_data->bullets[i].x += ducks_data->bullets[i].vx;
+			ducks_data->bullets[i].y += ducks_data->bullets[i].vy;
+		}
 	}
 }
 
 void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 {
+	// Game data
+	struct ducks_game_data_s *ducks_data = game_logic_data;
+
 	//User requests quit
 	if(e->type == SDL_QUIT
 			// User press ESC or q
@@ -171,14 +211,32 @@ void process_input(SDL_Event *e, struct sdl_data_struct *game_sdl_data, void *ga
 		//printf("controller: %d button: %d\n",e->jbutton.which, e->jbutton.button);
 		switch( e->jbutton.button)
 		{
-		case 0: ; break;
-		case 1: ; break;
-		case 2: ; break;
-		case 3: ; break;
-		case 4: ; break;
-		case 5: ; break;
-		case 6: ; break;
-		case 7: ; break;
+		case 0: ; fire(e->jbutton.which, ducks_data); break;
+		case 1: ; fire(e->jbutton.which, ducks_data); break;
+		case 2: ; fire(e->jbutton.which, ducks_data); break;
+		case 3: ; fire(e->jbutton.which, ducks_data); break;
+		case 4: ; fire(e->jbutton.which, ducks_data); break;
+		case 5: ; fire(e->jbutton.which, ducks_data); break;
+		case 6: ; fire(e->jbutton.which, ducks_data); break;
+		case 7: ; fire(e->jbutton.which, ducks_data); break;
+		}
+	}
+}
+
+void fire(int player, struct ducks_game_data_s *ducks_data) {
+	int i;
+	// Insert bullet in array
+	for(i=0; i<BULLETS_SIZE; i++)
+	{
+		if(!ducks_data->bullets[i].enabled)
+		{
+			ducks_data->bullets[i].enabled=1;
+			ducks_data->bullets[i].y=ducks_data->hunter.y;
+			ducks_data->bullets[i].x=ducks_data->hunter.x + HUNTER_WIDTH;
+			ducks_data->bullets[i].vx=SPEED_BULLET*cos(ANGLE_BULLET);
+			ducks_data->bullets[i].vy=-1.0*SPEED_BULLET*sin(ANGLE_BULLET);
+			//Mix_PlayChannel(-1, fire_chunk, 0);
+			break;
 		}
 	}
 }

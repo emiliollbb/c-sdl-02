@@ -14,6 +14,10 @@
 #define HUNTER_WIDTH 100
 #define HUNTER_X 400
 #define HUNTER_Y 71
+#define BULLETS_SIZE 100
+#define FIRED_BULLET_SIZE 4
+#define SPEED_BULLET 30.0
+#define ANGLE_BULLET 35.0*M_PI/180.0
 
 //x400 y71 w100 h196
 
@@ -29,7 +33,10 @@ struct duck_s {
 struct ducks_game_data_s {
 	struct kinematics_struct hunter;
 	struct duck_s ducks[DUCKS_SIZE];
+	struct kinematics_struct bullets[BULLETS_SIZE];
 	struct ducks_media_s media;
 };
+
+void fire(int player, struct ducks_game_data_s *ducks_data);
 
 #endif
