@@ -151,6 +151,16 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 	update_position(&(pong_data->ball));
 	check_collisions_ball(game_sdl_data, pong_data);
 
+	// Check limits
+	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
+		if(pong_data->players[i].kinematics.y < 0) {
+			pong_data->players[i].kinematics.y = 0;
+		}
+		if(pong_data->players[i].kinematics.y + pong_data->players[i].kinematics.h > game_sdl_data->sdl_display_mode->h) {
+			pong_data->players[i].kinematics.y = game_sdl_data->sdl_display_mode->h - pong_data->players[i].kinematics.h;
+		}
+	}
+
 	// Check Game Over
 	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
 		if(pong_data->players[i].points>=10)
