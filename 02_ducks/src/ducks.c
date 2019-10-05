@@ -23,6 +23,12 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 		ducks_data->ducks[i].kinematics.enabled=1;
 	}
 
+	// Init hunter
+	ducks_data->hunter.h = HUNTER_HEIGHT;
+	ducks_data->hunter.w = HUNTER_WIDTH;
+	ducks_data->hunter.x = 0;
+	ducks_data->hunter.y = game_sdl_data->sdl_display_mode->h - ducks_data->hunter.h;
+
 	return ducks_data;
 }
 
@@ -35,7 +41,7 @@ void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 
 void close_game(void *game_logic_data)
 {
-
+	free(game_logic_data);
 }
 
 void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
@@ -45,8 +51,8 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	// Game data
 	struct ducks_game_data_s *ducks_data = game_logic_data;
 
-	//Clear screen
-	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0x00, 0x00, 0x00, 0xFF);
+	//Clear screen 5e91fe
+	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0x5E, 0x91, 0xFE, 0xFF);
 	SDL_RenderClear(game_sdl_data->sdl_renderer);
 
 
@@ -79,6 +85,17 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 			SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.texture_sprites, &sdl_rect,  &sdl_rect2, 0.0, NULL, ducks_data->ducks[i].kinematics.vx>0 ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL);
 		}
 	}
+
+	// Render hunter
+	sdl_rect.x=HUNTER_X;
+	sdl_rect.y=HUNTER_Y;
+	sdl_rect.w=HUNTER_WIDTH;
+	sdl_rect.h=HUNTER_HEIGHT;
+	sdl_rect2.x=ducks_data->hunter.x;
+	sdl_rect2.y=ducks_data->hunter.y;
+	sdl_rect2.w=ducks_data->hunter.w;
+	sdl_rect2.h=ducks_data->hunter.h;
+	SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.texture_sprites, &sdl_rect,  &sdl_rect2, 0.0, NULL, SDL_FLIP_NONE);
 
 	//Update screen
 	SDL_RenderPresent(game_sdl_data->sdl_renderer);
