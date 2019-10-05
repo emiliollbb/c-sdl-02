@@ -11,18 +11,17 @@ LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
 # DEBUG FLAG specifies the flag used to add debug information
 DEBUG_FLAG=-g
 
+DIRS=mkdir -p bin
+
 #This is the target that compiles our executable 
 
 all: ducks.o ducks
 
-dirs:
-	mkdir -p bin
-
 ducks.o: src/ducks.c src/ducks.h
-	$(CC) src/ducks.c $(COMPILER_FLAGS) -o bin/ducks.o
+	$(DIRS) && $(CC) src/ducks.c $(COMPILER_FLAGS) -o bin/ducks.o
 
 ducks: bin/ducks.o
-	$(CC) ../01_pong/bin/main.o bin/ducks.o $(LINKER_FLAGS) -o bin/ducks
+	$(DIRS) && $(CC) ../01_pong/bin/main.o bin/ducks.o $(LINKER_FLAGS) -o bin/ducks
 
 clean:
 	rm -rf bin
