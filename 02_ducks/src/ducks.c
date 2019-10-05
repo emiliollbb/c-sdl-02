@@ -24,6 +24,7 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 	}
 
 	// Init hunter
+	ducks_data->hunter.enabled = 1;
 	ducks_data->hunter.h = HUNTER_HEIGHT;
 	ducks_data->hunter.w = HUNTER_WIDTH;
 	ducks_data->hunter.x = 0;
