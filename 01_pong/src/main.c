@@ -68,6 +68,7 @@ int main(int argc, char *args[]) {
 		{
 			printf("Your system is too slow. %d remaining!!!\n", remaining_ticks);
 		}
+		game_sdl_data.frame++;
 	}
 
 	close_media(&game_sdl_data, game_logic_data);
@@ -110,6 +111,8 @@ void reset_sdl_data(struct sdl_data_struct *game_sdl_data) {
 	game_sdl_data->sdl_window=NULL;
 	game_sdl_data->sdl_renderer=NULL;
 	game_sdl_data->sdl_display_mode=NULL;
+	game_sdl_data->ticks = 0;
+	game_sdl_data->frame = 0;
 	for(i=0; i<JOYSTICK_ARRAY_SIZE; i++)
 	{
 		game_sdl_data->sdl_joysticks[i]=NULL;

@@ -21,6 +21,9 @@ struct sdl_data_struct {
 	// Time to display each frame
 	unsigned int ticks_per_frame;
 
+	// Current frame
+	unsigned int frame;
+
 	//The window we'll be rendering to
 	SDL_Window *sdl_window;
 

@@ -11,6 +11,7 @@
 #define DUCK_START_X 0
 #define DUCK_WIDTH 40
 #define DUCK_HEIGHT 30
+#define DUCK_FREEZE_FRAMES 15
 #define HUNTER_HEIGHT 196
 #define HUNTER_WIDTH 100
 #define HUNTER_X 400
@@ -27,11 +28,15 @@ struct ducks_media_s {
 
 struct duck_s {
 	struct kinematics_struct kinematics;
-	unsigned int shoot_time;
+	unsigned int shoot_frame;
+};
+
+struct hunter_s {
+	struct kinematics_struct kinematics;
 };
 
 struct ducks_game_data_s {
-	struct kinematics_struct hunter;
+	struct hunter_s hunter;
 	struct duck_s ducks[DUCKS_SIZE];
 	struct kinematics_struct bullets[BULLETS_SIZE];
 	struct ducks_media_s media;

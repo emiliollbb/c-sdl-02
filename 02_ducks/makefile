@@ -23,5 +23,8 @@ ducks.o: src/ducks.c src/ducks.h
 ducks: bin/ducks.o
 	$(DIRS) && $(CC) ../01_pong/bin/main.o bin/ducks.o $(LINKER_FLAGS) -o bin/ducks
 
+ducks_debug: ../01_pong/src/main.c
+	$(CC) ../01_pong/src/main.c bin/ducks.o $(LINKER_FLAGS) -o bin/ducks
+
 clean:
 	rm -rf bin

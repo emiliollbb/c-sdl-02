@@ -20,16 +20,16 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 		ducks_data->ducks[i].kinematics.h=DUCK_HEIGHT;
 		ducks_data->ducks[i].kinematics.vx=DUCK_SPEED;
 		ducks_data->ducks[i].kinematics.vy=0;
-		ducks_data->ducks[i].shoot_time=0;
+		ducks_data->ducks[i].shoot_frame=0;
 		ducks_data->ducks[i].kinematics.enabled=1;
 	}
 
 	// Init hunter
-	ducks_data->hunter.enabled = 1;
-	ducks_data->hunter.h = HUNTER_HEIGHT;
-	ducks_data->hunter.w = HUNTER_WIDTH;
-	ducks_data->hunter.x = 0;
-	ducks_data->hunter.y = game_sdl_data->sdl_display_mode->h - ducks_data->hunter.h;
+	ducks_data->hunter.kinematics.enabled = 1;
+	ducks_data->hunter.kinematics.h = HUNTER_HEIGHT;
+	ducks_data->hunter.kinematics.w = HUNTER_WIDTH;
+	ducks_data->hunter.kinematics.x = 0;
+	ducks_data->hunter.kinematics.y = game_sdl_data->sdl_display_mode->h - ducks_data->hunter.kinematics.h;
 
 	// Init bullets
 	for(i=0; i<BULLETS_SIZE; i++)
@@ -81,6 +81,8 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 
 
 	// Render ducks
+	sdl_rect.w=DUCK_WIDTH;
+	sdl_rect.h=DUCK_HEIGHT;
 	for(i=0; i<DUCKS_SIZE; i++)
 	{
 		if(ducks_data->ducks[i].kinematics.enabled)
@@ -100,8 +102,7 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 				sdl_rect.x=178;
 				sdl_rect.y=237;
 			}
-			sdl_rect.w=DUCK_WIDTH;
-			sdl_rect.h=DUCK_HEIGHT;
+
 			sdl_rect2.x=ducks_data->ducks[i].kinematics.x;
 			sdl_rect2.y=ducks_data->ducks[i].kinematics.y;
 			sdl_rect2.w=ducks_data->ducks[i].kinematics.w;
@@ -115,10 +116,10 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	sdl_rect.y=HUNTER_Y;
 	sdl_rect.w=HUNTER_WIDTH;
 	sdl_rect.h=HUNTER_HEIGHT;
-	sdl_rect2.x=ducks_data->hunter.x;
-	sdl_rect2.y=ducks_data->hunter.y;
-	sdl_rect2.w=ducks_data->hunter.w;
-	sdl_rect2.h=ducks_data->hunter.h;
+	sdl_rect2.x=ducks_data->hunter.kinematics.x;
+	sdl_rect2.y=ducks_data->hunter.kinematics.y;
+	sdl_rect2.w=ducks_data->hunter.kinematics.w;
+	sdl_rect2.h=ducks_data->hunter.kinematics.h;
 	SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.texture_sprites, &sdl_rect,  &sdl_rect2, 0.0, NULL, SDL_FLIP_NONE);
 
 	// Render fired bullets
@@ -140,7 +141,7 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 }
 
 void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
-	int i, j;
+	int i, j, all_ducks_disabled;
 
 	// Game data
 	struct ducks_game_data_s *ducks_data = game_logic_data;
@@ -148,33 +149,19 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 	// update ducks
 	for(i=0; i<DUCKS_SIZE; i++)
 	{
-		// Update ducks speed
-
-		// Set speed to 0 to outscreen ducks
-		if(ducks_data->ducks[i].kinematics.y > game_sdl_data->sdl_display_mode->h)
-		{
-			ducks_data->ducks[i].kinematics.enabled = 0;
-			ducks_data->ducks[i].kinematics.vx = 0;
-			ducks_data->ducks[i].kinematics.vy = 0;
-		}
 		// Disable outscreen ducks
-		if(ducks_data->ducks[i].kinematics.vx>0 && ducks_data->ducks[i].kinematics.x > game_sdl_data->sdl_display_mode->w)
-		{
-			ducks_data->ducks[i].kinematics.enabled=0;
-		}
-		// Disable outscreen ducks
-		if(ducks_data->ducks[i].kinematics.vx<0 && ducks_data->ducks[i].kinematics.x<0)
-		{
-			ducks_data->ducks[i].kinematics.enabled=0;
-		}
+//		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].kinematics.x > game_sdl_data->sdl_display_mode->w)
+//		{
+//			ducks_data->ducks[i].kinematics.enabled=0;
+//		}
 		// Shot time
-		if(game_sdl_data->ticks == ducks_data->ducks[i].shoot_time)
+		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].shoot_frame > 0 && game_sdl_data->frame < ducks_data->ducks[i].shoot_frame + DUCK_FREEZE_FRAMES)
 		{
 			ducks_data->ducks[i].kinematics.vx=0;
 			ducks_data->ducks[i].kinematics.vy=0;
 		}
-		// 10 frames after shot, the ducks falls
-		if(ducks_data->ducks[i].shoot_time != 0 && game_sdl_data->ticks == ducks_data->ducks[i].shoot_time+10)
+		// 50 frames after shot, the ducks falls
+		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].shoot_frame > 0 && game_sdl_data->frame > ducks_data->ducks[i].shoot_frame + DUCK_FREEZE_FRAMES)
 		{
 			ducks_data->ducks[i].kinematics.vx = 0;
 			ducks_data->ducks[i].kinematics.vy = 10;
@@ -201,6 +188,37 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 			ducks_data->bullets[i].x += ducks_data->bullets[i].vx;
 			ducks_data->bullets[i].y += ducks_data->bullets[i].vy;
 		}
+	}
+
+	// Check collisions
+	for(i=0; i<BULLETS_SIZE; i++)
+	{
+		for(j=0; j<DUCKS_SIZE; j++)
+		{
+			if(ducks_data->ducks[j].shoot_frame == 0
+					&& check_collision(&ducks_data->bullets[i], &ducks_data->ducks[j].kinematics))
+			{
+				ducks_data->ducks[j].shoot_frame=game_sdl_data->frame;
+				//hunters[bullets[i].player].score++;
+				ducks_data->bullets[i].enabled=0;
+			}
+		}
+	}
+
+
+	// Check if end of game
+	all_ducks_disabled=1;
+	for(i=0; i<DUCKS_SIZE; i++)
+	{
+		if(ducks_data->ducks[i].kinematics.enabled)
+		{
+			all_ducks_disabled=0;
+			break;
+		}
+	}
+	if(all_ducks_disabled)
+	{
+		game_sdl_data->game_over=1;
 	}
 }
 
@@ -248,8 +266,8 @@ void fire(int player, struct ducks_game_data_s *ducks_data) {
 		if(!ducks_data->bullets[i].enabled)
 		{
 			ducks_data->bullets[i].enabled=1;
-			ducks_data->bullets[i].y=ducks_data->hunter.y;
-			ducks_data->bullets[i].x=ducks_data->hunter.x + HUNTER_WIDTH;
+			ducks_data->bullets[i].y=ducks_data->hunter.kinematics.y;
+			ducks_data->bullets[i].x=ducks_data->hunter.kinematics.x + HUNTER_WIDTH;
 			ducks_data->bullets[i].vx=SPEED_BULLET*cos(ANGLE_BULLET);
 			ducks_data->bullets[i].vy=-1.0*SPEED_BULLET*sin(ANGLE_BULLET);
 			Mix_PlayChannel(-1, ducks_data->media.fire_sound, 0);
