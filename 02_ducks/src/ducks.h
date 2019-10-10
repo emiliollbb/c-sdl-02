@@ -23,6 +23,7 @@
 
 struct ducks_media_s {
 	SDL_Texture *texture_sprites;
+	SDL_Texture *background;
 	Mix_Chunk *fire_sound;
 };
 

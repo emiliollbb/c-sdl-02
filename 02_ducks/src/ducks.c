@@ -43,9 +43,10 @@ void* init_game(struct sdl_data_struct *game_sdl_data)
 void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	// Game data
 	struct ducks_game_data_s *ducks_data = game_logic_data;
-
+	// Load Sprites texture
 	ducks_data->media.texture_sprites=load_texture("res/duckhunt_sprites.png", game_sdl_data->sdl_renderer);
-
+	// Load Background texture
+	ducks_data->media.background=load_texture("res/field.png", game_sdl_data->sdl_renderer);
 	// Load firing chunk
 	ducks_data->media.fire_sound = Mix_LoadWAV("res/firing.wav");
 }
@@ -59,6 +60,8 @@ void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	ducks_data->media.fire_sound = NULL;
 
 	// Destroy textures
+	SDL_DestroyTexture(ducks_data->media.background);
+	ducks_data->media.background = NULL;
 	SDL_DestroyTexture(ducks_data->media.texture_sprites);
 	ducks_data->media.texture_sprites = NULL;
 }
@@ -79,6 +82,16 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0x5E, 0x91, 0xFE, 0xFF);
 	SDL_RenderClear(game_sdl_data->sdl_renderer);
 
+	// Render background
+	sdl_rect.x=0;
+	sdl_rect.y=0;
+	sdl_rect.w=1080;
+	sdl_rect.h=720;
+	sdl_rect2.x=0;
+	sdl_rect2.y=0;
+	sdl_rect2.w=1080;
+	sdl_rect2.h=720;
+	SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.background, &sdl_rect,  &sdl_rect2, 0.0, NULL, SDL_FLIP_NONE);
 
 	// Render ducks
 	sdl_rect.w=DUCK_WIDTH;
