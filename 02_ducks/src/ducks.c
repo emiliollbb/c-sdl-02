@@ -173,7 +173,7 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	{
 		render_text(game_sdl_data->sdl_renderer, text_color,
 				ducks_data->media.text_font, "GAME OVER",
-				300, game_sdl_data->sdl_display_mode->h/2-80);
+				200, game_sdl_data->sdl_display_mode->h/2-80);
 	}
 
 	//Update screen
