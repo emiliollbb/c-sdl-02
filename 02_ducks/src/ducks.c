@@ -49,6 +49,13 @@ void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	ducks_data->media.background=load_texture("res/field.png", game_sdl_data->sdl_renderer);
 	// Load firing chunk
 	ducks_data->media.fire_sound = Mix_LoadWAV("res/firing.wav");
+	// Load text font
+	ducks_data->media.text_font=TTF_OpenFont("res/ArcadeClassic.ttf", 160);;
+	if(ducks_data->media.text_font == NULL)
+	{
+		printf( "Failed to load numeric font! SDL_ttf Error: %s\n", TTF_GetError() );
+		exit(-1);
+	}
 }
 
 void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
@@ -64,6 +71,10 @@ void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 	ducks_data->media.background = NULL;
 	SDL_DestroyTexture(ducks_data->media.texture_sprites);
 	ducks_data->media.texture_sprites = NULL;
+
+	// Close Fonts
+	TTF_CloseFont(ducks_data->media.text_font);
+	ducks_data->media.text_font = NULL;
 }
 
 void close_game(void *game_logic_data)
@@ -75,8 +86,14 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 {
 	int i;
 	SDL_Rect sdl_rect, sdl_rect2;
+	SDL_Color text_color;
 	// Game data
 	struct ducks_game_data_s *ducks_data = game_logic_data;
+
+	text_color.r=0;
+	text_color.g=0;
+	text_color.b=0;
+	text_color.a=0;
 
 	//Clear screen 5e91fe
 	SDL_SetRenderDrawColor(game_sdl_data->sdl_renderer, 0x5E, 0x91, 0xFE, 0xFF);
@@ -91,6 +108,8 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	sdl_rect2.y=0;
 	sdl_rect2.w=1080;
 	sdl_rect2.h=720;
+	//sdl_rect2.w=game_sdl_data->sdl_display_mode->w;
+	//sdl_rect2.h=game_sdl_data->sdl_display_mode->h;
 	SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.background, &sdl_rect,  &sdl_rect2, 0.0, NULL, SDL_FLIP_NONE);
 
 	// Render ducks
@@ -149,6 +168,14 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 		}
 	}
 
+	// Draw Game Over
+	if(game_sdl_data->game_over)
+	{
+		render_text(game_sdl_data->sdl_renderer, text_color,
+				ducks_data->media.text_font, "GAME OVER",
+				300, game_sdl_data->sdl_display_mode->h/2-80);
+	}
+
 	//Update screen
 	SDL_RenderPresent(game_sdl_data->sdl_renderer);
 }
@@ -162,11 +189,16 @@ void update(struct sdl_data_struct *game_sdl_data, void *game_logic_data) {
 	// update ducks
 	for(i=0; i<DUCKS_SIZE; i++)
 	{
-		// Disable outscreen ducks
-//		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].kinematics.x > game_sdl_data->sdl_display_mode->w)
-//		{
-//			ducks_data->ducks[i].kinematics.enabled=0;
-//		}
+		// Disable outscreen ducks right
+		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].kinematics.x > game_sdl_data->sdl_display_mode->w)
+		{
+			ducks_data->ducks[i].kinematics.enabled=0;
+		}
+		// Disable outscreen ducks down
+		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].kinematics.y > game_sdl_data->sdl_display_mode->h)
+		{
+			ducks_data->ducks[i].kinematics.enabled=0;
+		}
 		// Shot time
 		if(ducks_data->ducks[i].kinematics.enabled && ducks_data->ducks[i].shoot_frame > 0 && game_sdl_data->frame < ducks_data->ducks[i].shoot_frame + DUCK_FREEZE_FRAMES)
 		{

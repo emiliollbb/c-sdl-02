@@ -25,6 +25,8 @@ struct ducks_media_s {
 	SDL_Texture *texture_sprites;
 	SDL_Texture *background;
 	Mix_Chunk *fire_sound;
+	// Numeric font
+	TTF_Font *text_font;
 };
 
 struct duck_s {
