@@ -64,7 +64,13 @@ void load_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 }
 
 void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
+	// Game data
+	struct pong_data_struct *pong_data = game_logic_data;
 
+	TTF_CloseFont(pong_data->media.text_font);
+	pong_data->media.text_font = NULL;
+	TTF_CloseFont(pong_data->media.number_font);
+	pong_data->media.number_font = NULL;
 }
 
 void init_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data){
@@ -132,7 +138,7 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	else {
 		render_text(game_sdl_data->sdl_renderer, text_color,
 				pong_data->media.text_font, "GAME OVER",
-				300, game_sdl_data->sdl_display_mode->h/2-80);
+				150, game_sdl_data->sdl_display_mode->h/2-80);
 	}
 
 

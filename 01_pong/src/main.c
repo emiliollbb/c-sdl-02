@@ -224,6 +224,9 @@ void init_sdl(struct sdl_data_struct *game_sdl_data) {
 			exit(-1);
 		}
 
+		// Hide Mouse
+	    SDL_ShowCursor(SDL_DISABLE);
+
 		//Initialize SDL TTF
 		if (TTF_Init() == -1) {
 			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
