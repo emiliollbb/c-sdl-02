@@ -1,5 +1,6 @@
 // Standard Input/Output library
 #include <stdio.h>
+#include <time.h>
 // Main SDL library
 #include <SDL2/SDL.h>
 // SDL Fonts library. Used to render text
