@@ -106,10 +106,8 @@ void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 	sdl_rect.h=720;
 	sdl_rect2.x=0;
 	sdl_rect2.y=0;
-	sdl_rect2.w=1080;
-	sdl_rect2.h=720;
-	//sdl_rect2.w=game_sdl_data->sdl_display_mode->w;
-	//sdl_rect2.h=game_sdl_data->sdl_display_mode->h;
+	sdl_rect2.w=game_sdl_data->sdl_display_mode->w;
+	sdl_rect2.h=game_sdl_data->sdl_display_mode->h;
 	SDL_RenderCopyEx(game_sdl_data->sdl_renderer, ducks_data->media.background, &sdl_rect,  &sdl_rect2, 0.0, NULL, SDL_FLIP_NONE);
 
 	// Render ducks
