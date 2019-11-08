@@ -15,6 +15,9 @@ void close_game(void *game_logic_data)
 
 }
 
+void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
+}
+
 void render(struct sdl_data_struct *game_sdl_data, void *game_logic_data)
 {
 	//Clear screen

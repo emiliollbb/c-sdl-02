@@ -1,4 +1,5 @@
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "../../01_pong/src/main.h"
 
 #ifndef PONG_H
