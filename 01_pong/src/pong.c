@@ -74,8 +74,8 @@ void close_media(struct sdl_data_struct *game_sdl_data, void *game_logic_data){
 }
 
 void init_ball(struct sdl_data_struct *game_sdl_data, struct pong_data_struct *pong_data){
-	pong_data->ball.vx=10;
-	pong_data->ball.vy=10;
+	pong_data->ball.vx=BALL_SPEED;
+	pong_data->ball.vy=BALL_SPEED;
 	pong_data->ball.x=game_sdl_data->sdl_display_mode->w/2;
 	pong_data->ball.y=game_sdl_data->sdl_display_mode->h/2;
 }
@@ -185,12 +185,25 @@ void check_collisions_ball(struct sdl_data_struct *game_sdl_data, struct pong_da
 	// loops index
 	int i;
 	// Check collisions players
+
+	if(check_collision(&pong_data->ball, &pong_data->players[0].kinematics))
+			{
+				pong_data->ball.vx=BALL_SPEED;
+			}
+	if(check_collision(&pong_data->ball, &pong_data->players[1].kinematics))
+				{
+					pong_data->ball.vx=-BALL_SPEED;
+				}
+
+
+	/*
 	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
 		if(check_collision(&pong_data->ball, &pong_data->players[i].kinematics))
 		{
 			pong_data->ball.vx=-1*pong_data->ball.vx;
 		}
 	}
+	*/
 	// Check collision top and bottom wall
 	if(pong_data->ball.y<0 || pong_data->ball.y>game_sdl_data->sdl_display_mode->h)
 	{
