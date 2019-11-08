@@ -185,25 +185,15 @@ void check_collisions_ball(struct sdl_data_struct *game_sdl_data, struct pong_da
 	// loops index
 	int i;
 	// Check collisions players
-
 	if(check_collision(&pong_data->ball, &pong_data->players[0].kinematics))
-			{
-				pong_data->ball.vx=BALL_SPEED;
-			}
-	if(check_collision(&pong_data->ball, &pong_data->players[1].kinematics))
-				{
-					pong_data->ball.vx=-BALL_SPEED;
-				}
-
-
-	/*
-	for(i=0; i<PONG_PLAYERS_COUNT; i++) {
-		if(check_collision(&pong_data->ball, &pong_data->players[i].kinematics))
-		{
-			pong_data->ball.vx=-1*pong_data->ball.vx;
-		}
+	{
+		pong_data->ball.vx=BALL_SPEED;
 	}
-	*/
+	if(check_collision(&pong_data->ball, &pong_data->players[1].kinematics))
+	{
+		pong_data->ball.vx=-BALL_SPEED;
+	}
+
 	// Check collision top and bottom wall
 	if(pong_data->ball.y<0 || pong_data->ball.y>game_sdl_data->sdl_display_mode->h)
 	{
